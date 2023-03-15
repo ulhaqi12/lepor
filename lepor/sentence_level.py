@@ -2,15 +2,15 @@ import math
 import re
 
 
-def length_penality(reference, output):
+def length_penalty(reference, output):
     """
-    Function will calculate length penality(LP) in score due to difference in lengths.
+    Function will calculate length penalty(LP) in score due to difference in lengths.
 
     Args:
         reference: reference sentence
         output: output sentence by a translation engine.
     Return:
-        LP: penality of difference in length in reference and output sentence.
+        LP: penalty of difference in length in reference and output sentence.
     """
 
     r_len = len(reference)
@@ -24,15 +24,15 @@ def length_penality(reference, output):
         return math.exp(1 - (o_len/r_len))
 
 
-def ngram_positional_penality(ref_words, out_words):
+def ngram_positional_penalty(ref_words, out_words):
     """
     Function will calculate
 
     Args:
-        reference: reference sentence
-        output: output sentence by a translation engine.
+        ref_words: reference sentence
+        out_words: output sentence by a translation engine.
     Return:
-        NPosPenal: penality due to difference in postions of ngram in reference and output sentences.
+        NPosPenal: penalty due to difference in positions of ngram in reference and output sentences.
     """
 
     alignments = []
@@ -43,12 +43,10 @@ def ngram_positional_penality(ref_words, out_words):
         elif ref_words.count(out_word) == 1:
             alignments.append(ref_words.index(out_word))
         else:
-            print(out_word)
             # if there are multiple possibilities.
             ref_indexes = [i for i, word in enumerate(ref_words) if word == out_word]
 
             is_matched = [False] * len(ref_indexes)
-            print(ref_indexes)
 
             for ind, ref_word_index in enumerate(ref_indexes):
                 if 0 < ref_word_index - 1 < len(ref_words) and 0 < out_index - 1 < len(out_words) \
@@ -57,8 +55,6 @@ def ngram_positional_penality(ref_words, out_words):
                 elif 0 < ref_word_index + 1 < len(ref_words) and 0 < out_index + 1 < len(out_words) \
                         and ref_words[ref_word_index + 1] == out_words[out_index + 1]:
                     is_matched[ind] = True
-
-            print(is_matched)
 
             if is_matched.count(True) == 1:
                 alignments.append(ref_indexes[is_matched.index(True)])
@@ -83,14 +79,12 @@ def ngram_positional_penality(ref_words, out_words):
                         min_index = ref_index
                 alignments.append(min_index)
 
-    print(alignments)
     alignments = [a + 1 for a in alignments if a != -1]
     match_count = len(alignments)
     npd_list = []
 
     for ind, a in enumerate(alignments):
         npd_list.append(abs(((ind + 1) / len(out_words)) - (a / len(ref_words))))
-    print(npd_list)
     npd = sum(npd_list) / len(out_words)
 
     return math.exp(-npd), match_count
@@ -119,36 +113,37 @@ def harmonic(match_count, ref_length, out_length, alpha, beta):
     return harmonic_score
 
 
-def lepor(reference, output, alpha=1, beta=1):
+def sentence_lepor(reference, output, alpha=1, beta=1):
+    """
 
+    Args:
+        reference: reference sentence/ ground truth
+        output: output of translation engine
+        alpha: a parameter to set the weight for recall.
+        beta: a parameter to set the weight for precision.
+    """
     ref = re.findall(r"[\w']+|[.,!?;]", reference)
     out = re.findall(r"[\w']+|[.,!?;]", output)
 
-    lp = length_penality(ref, out)
-    npd, match_count = ngram_positional_penality(ref, out)
+    lp = length_penalty(ref, out)
+    npd, match_count = ngram_positional_penalty(ref, out)
     harmonic_score = harmonic(match_count, len(ref), len(out), alpha, beta)
 
-    lepor = lp * npd * harmonic_score
-
-    return lepor
+    return lp * npd * harmonic_score
 
 
-def main():
-    reference = 'a bird is on a stone.'
-    output = 'a stone on a bird.'
+def corpus_lepor(references, outputs, alpha=1, beta=1):
+    """
+    Args:
+        references: list of reference sentences.
+        outputs: list of sentences given by the translation engine/model.
+        alpha: a parameter to set the weight for recall.
+        beta: a parameter to set the weight for precision.
+    """
 
-    print('Lepor: ', lepor(reference, output))
+    lepor_scores = list()
 
-    reference = 'a bird is on a stone.'
-    output = 'a bird is on a stone.'
+    for reference_sen, output_sen in zip(references, outputs):
+        lepor_scores.append(sentence_lepor(reference_sen, output_sen, alpha, beta))
 
-    print('Lepor: ', lepor(reference, output))
-
-    reference = 'a bird is on a stone.'
-    output = 'scary cow was not bad'
-
-    print('Lepor: ', lepor(reference, output))
-
-
-if __name__ == '__main__':
-    main()
+    return sum(lepor_scores) / len(lepor_scores)
