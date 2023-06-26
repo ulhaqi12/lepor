@@ -20,3 +20,7 @@ deploy:
   password: "$PYPI_TOKEN"
   on:
     branch: master
+
+cache:
+  directories:
+    - $HOME/.cache/pip
