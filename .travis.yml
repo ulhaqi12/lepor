@@ -1,3 +1,7 @@
+addons:
+  apt:
+    packages:
+      - libssl-dev
 
 language: python
 python:
@@ -21,7 +25,3 @@ deploy:
   on:
     branch: master
 
-addons:
-  apt:
-    packages:
-      - libssl-dev
