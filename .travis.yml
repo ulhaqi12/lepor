@@ -20,3 +20,8 @@ deploy:
   password: "$PYPI_TOKEN"
   on:
     branch: master
+
+addons:
+  apt:
+    packages:
+      - libssl-dev
