@@ -1,7 +1,6 @@
 # LEPOR: A Robust Evaluation Metric for Machine Translation with Augmented Factors
 This repo contains code for a machine translation evaluation metric named LEPOR.
 
-**Note: The code for LEPOR is not available in python yet. The plan is to implement all the variations on LEPOR and publish it as a package. There is also possibility of intigrating it to NLTK or other NLP libraries.**
 
 If you have any suggestions or want to contribute. Create an issue and generate a PR.
 
