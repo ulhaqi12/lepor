@@ -9,7 +9,7 @@ Requirement: Python 3
 pip install lepor
 ```
 ## How to Run
-#### Function 1: Calculate the LEPOR for sentences
+#### Calculate the LEPOR for sentences
 If you want to check only one sentence:
 ```python
 >>> from lepor import sentence_lepor
