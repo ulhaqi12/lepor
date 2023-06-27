@@ -10,7 +10,7 @@ pip install lepor
 ```
 ## How to Run
 #### Function 1: Calculate the LEPOR for sentences
-If you want to check only one sentence (a list of sentences):
+If you want to check only one sentence:
 ```python
 >>> from lepor import sentence_lepor
 >>> reference = 'a bird is on a stone.'
@@ -19,7 +19,7 @@ If you want to check only one sentence (a list of sentences):
 >>> sentence_lepor(reference, output)
 0.736
 ```
-If you want to check multiple hypothesis (several lists of sentences):
+If you want to check multiple hypothesis (several sentences):
 ```python
 >>> from lepor import corpus_lepor
 >>> corpus_lepor(references, outputs)
