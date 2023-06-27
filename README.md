@@ -1,5 +1,5 @@
 # LEPOR: A Robust Evaluation Metric for Machine Translation with Augmented Factors
-Python Packafe for a machine translation evaluation metric named LEPOR.
+Python Package for a machine translation evaluation metric named LEPOR.
 
 ## Installation
 Requirement: Python 3
